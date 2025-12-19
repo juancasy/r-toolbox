@@ -1,29 +1,25 @@
-<!-- README.md is generated from README.Rmd. Please edit README.Rmd -->
-
----
-title: "Toolbox for package management on macOS"
-output: github_document
----
+Toolbox for package management on macOS
+================
 
 ## Foreword
 
 This document describes a **personal** toolbox for managing R packages
-on macOS. It is my personal philosophy and setup, shared here for reference
-and possible inspiration.
-It is **not** intended as a general-purpose package management solution.
+on macOS. It is my personal philosophy and setup, shared here for
+reference and possible inspiration. It is **not** intended as a
+general-purpose package management solution.
 
 ## Overview
 
-Since I develop R packages frequently and use R over many years, it is important
-for me to have a clear and reproducible setup for managing packages, where
-personal development and CRAN packages are clearly separated.
+Since I develop R packages frequently and use R over many years, it is
+important for me to have a clear and reproducible setup for managing
+packages, where personal development and CRAN packages are clearly
+separated.
 
-1. **System library** (`.Library`)
-   - R base and recommended packages
-   - CRAN packages
-
-2. **Development library** (custom path)
-   - User-developed packages under active development
+1.  **System library** (`.Library`)
+    - R base and recommended packages
+    - CRAN packages
+2.  **Development library** (custom path)
+    - User-developed packages under active development
 
 The design goals are:
 
@@ -33,46 +29,45 @@ The design goals are:
 - A clean and reproducible workflow for **R upgrades**
 - No dependency on external repositories at startup
 
-This setup assumes that the **system library is writable**
-(standard macOS Framework installation of R).
+This setup assumes that the **system library is writable** (standard
+macOS Framework installation of R).
 
----
-
+------------------------------------------------------------------------
 
 ## Quick start
 
-This section summarises the minimal steps required to activate the toolbox
-on a new macOS machine.
+This section summarises the minimal steps required to activate the
+toolbox on a new macOS machine.
 
 ### 1. Define the development library
 
 Add the following line to your `~/.Renviron` file:
 
-```text
+``` text
 MY_R_DEVLIB=~/Dropbox/Boulot/dev/r/myRlib
 ```
 
 Restart RStudio after editing `.Renviron`.
 
----
+------------------------------------------------------------------------
 
 ### 2. Copy the toolbox files
 
-Clone or download this repository, then copy the helper files to your local
-R configuration directory:
+Clone or download this repository, then copy the helper files to your
+local R configuration directory:
 
-```bash
+``` bash
 mkdir -p ~/.R/toolbox
 cp R/*.R ~/.R/toolbox/
 ```
 
----
+------------------------------------------------------------------------
 
 ### 3. Configure startup
 
 Add the following content **verbatim** to your `~/.Rprofile`:
 
-```r
+``` r
 tb <- path.expand("~/.R/toolbox")
 
 source(file.path(tb, "00-config.R"))
@@ -85,13 +80,13 @@ message("✅ R startup configured (system + dev)")
 
 Restart RStudio.
 
----
+------------------------------------------------------------------------
 
 ### 4. Verify the setup
 
 Run in R:
 
-```r
+``` r
 check_setup()
 ```
 
@@ -103,41 +98,39 @@ You should see:
 
 At this point the toolbox is fully operational.
 
----
+------------------------------------------------------------------------
 
 ## Repository structure
 
-This repository **includes the actual `.R` helper files**, stored under a
-top-level `/R/` directory (similarly to an R package layout, although this is
-*not* a package).
+This repository **includes the actual `.R` helper files**, stored under
+a top-level `/R/` directory (similarly to an R package layout, although
+this is *not* a package).
 
-```
-toolbox/
-├─ README.Rmd
-└─ R/
-   ├─ 00-config.R
-   ├─ install_helpers.R
-   ├─ upgrade_helpers.R
-   └─ diagnostics.R
-```
+    toolbox/
+    ├─ README.Rmd
+    └─ R/
+       ├─ 00-config.R
+       ├─ install_helpers.R
+       ├─ upgrade_helpers.R
+       └─ diagnostics.R
 
-The repository serves as **documentation and a reference implementation**.
-The files under `/R/` must be **copied verbatim** to the local R installation,
-as described below.
+The repository serves as **documentation and a reference
+implementation**. The files under `/R/` must be **copied verbatim** to
+the local R installation, as described below.
 
----
+------------------------------------------------------------------------
 
 ## Library policy
 
 At startup, the following library order is enforced:
 
-```r
+``` r
 .libPaths()
 ```
 
 Expected result:
 
-```text
+``` text
 [1] /Library/Frameworks/R.framework/Versions/<R-version>/Resources/library
 [2] <MY_R_DEVLIB>
 ```
@@ -147,20 +140,19 @@ Meaning:
 - **System library** (`.Library`)
   - Base / recommended packages
   - All CRAN packages
-
 - **Development library** (`MY_R_DEVLIB`)
   - User-developed packages only
 
 No user library (`R_LIBS_USER`) is used in `.libPaths()`.
 
----
+------------------------------------------------------------------------
 
 ## Development library via environment variable
 
-The development library path is defined through an **environment variable**.
-Add the following line to your `~/.Renviron` file:
+The development library path is defined through an **environment
+variable**. Add the following line to your `~/.Renviron` file:
 
-```text
+``` text
 MY_R_DEVLIB=~/Dropbox/Boulot/dev/r/myRlib
 ```
 
@@ -171,19 +163,19 @@ MY_R_DEVLIB=~/Dropbox/Boulot/dev/r/myRlib
 - Clear failure if misconfigured
 - Separation between *policy* and *local paths*
 
-If `MY_R_DEVLIB` is not defined, R startup fails explicitly
-with a clear error.
+If `MY_R_DEVLIB` is not defined, R startup fails explicitly with a clear
+error.
 
----
+------------------------------------------------------------------------
 
 ## Local installation layout
 
-On the local machine, the active configuration lives **inside the user home**,
-not inside the GitHub repository.
+On the local machine, the active configuration lives **inside the user
+home**, not inside the GitHub repository.
 
 Expected layout:
 
-```text
+``` text
 ~/.Rprofile
 ~/.Renviron
 ~/.R/
@@ -196,24 +188,24 @@ Expected layout:
 
 ### Installation procedure
 
-1. Clone or download this repository.
-2. Copy the contents of the `/R/` directory into `~/.R/toolbox/`.
+1.  Clone or download this repository.
+2.  Copy the contents of the `/R/` directory into `~/.R/toolbox/`.
 
 Example:
 
-```bash
+``` bash
 mkdir -p ~/.R/toolbox
 cp R/*.R ~/.R/toolbox/
 ```
 
----
+------------------------------------------------------------------------
 
 ## Startup behaviour (`.Rprofile`)
 
 The `~/.Rprofile` is deliberately minimal and only sources local files.
 Add the following content **verbatim**:
 
-```r
+``` r
 tb <- path.expand("~/.R/toolbox")
 
 source(file.path(tb, "00-config.R"))
@@ -226,7 +218,7 @@ message("✅ R startup configured (system + dev)")
 
 No logic, no installation, no side effects beyond configuration.
 
----
+------------------------------------------------------------------------
 
 ## Role of each toolbox file
 
@@ -240,21 +232,20 @@ Responsibilities:
 
 This file defines **policy**, not actions.
 
----
+------------------------------------------------------------------------
 
 ### `install_helpers.R` — installation helpers
 
 Provides explicit helpers:
 
-- `install_cran(pkgs)`
-  → installs CRAN packages **into `.Library`**
+- `install_cran(pkgs)` → installs CRAN packages **into `.Library`**
 
-- `install_my(path = ".")`
-  → installs the current development package **into the dev library**
+- `install_my(path = ".")` → installs the current development package
+  **into the dev library**
 
 RStudio’s *Install and Restart* button is deliberately avoided.
 
----
+------------------------------------------------------------------------
 
 ### `upgrade_helpers.R` — R upgrade workflow
 
@@ -262,16 +253,16 @@ Defines a reproducible workflow for R upgrades.
 
 Before upgrading R:
 
-```r
+``` r
 save_cran_list()
 ```
 
-This saves the list of non-base / non-recommended packages
-currently installed in `.Library`.
+This saves the list of non-base / non-recommended packages currently
+installed in `.Library`.
 
 After installing a new R version:
 
-```r
+``` r
 restore_cran_list()
 ```
 
@@ -279,27 +270,26 @@ All packages are reinstalled cleanly into the new system library.
 
 This avoids copying binaries across R versions.
 
----
+------------------------------------------------------------------------
 
 ### `diagnostics.R` — validation and inspection
 
 Provides utilities such as:
 
-- `check_setup()`
-  Prints:
+- `check_setup()` Prints:
+
   - `.libPaths()`
   - write permissions
   - test package locations
 
-- `list_sys_nonbase()`
-  Lists CRAN packages installed in `.Library`.
+- `list_sys_nonbase()` Lists CRAN packages installed in `.Library`.
 
-- `list_dev_packages()`
-  Lists packages installed in the development library.
+- `list_dev_packages()` Lists packages installed in the development
+  library.
 
 These functions are **read-only** and safe.
 
----
+------------------------------------------------------------------------
 
 ## RStudio workflow recommendations
 
@@ -308,26 +298,25 @@ These functions are **read-only** and safe.
 - Use **Build & Reload**
   - loads the package via `devtools::load_all()`
   - does *not* install anything
-
 - Use `install_my()` when an installed copy is needed.
 
 ### CRAN packages
 
 Always use:
 
-```r
+``` r
 install_cran("pkgname")
 ```
 
 This guarantees the package ends up in `.Library`.
 
----
+------------------------------------------------------------------------
 
 ## R upgrades (summary)
 
 Before upgrading R:
 
-```r
+``` r
 save_cran_list()
 ```
 
@@ -337,13 +326,13 @@ Restart RStudio.
 
 Restore packages:
 
-```r
+``` r
 restore_cran_list()
 ```
 
 This yields a clean, version-consistent system library.
 
----
+------------------------------------------------------------------------
 
 ## Why this setup works well
 
@@ -361,15 +350,16 @@ This configuration is particularly well suited for:
 - mixed CRAN + development usage
 - environments where stability matters more than convenience
 
----
+------------------------------------------------------------------------
 
 ## Final note
 
 This toolbox is intentionally **not an R package**.
 
-The use of a `/R/` directory mirrors a package layout only for clarity and
-future extensibility. If, at some point, interactive help or namespace control
-becomes desirable, these helpers could be migrated into a small personal
-package without changing the underlying philosophy.
+The use of a `/R/` directory mirrors a package layout only for clarity
+and future extensibility. If, at some point, interactive help or
+namespace control becomes desirable, these helpers could be migrated
+into a small personal package without changing the underlying
+philosophy.
 
 For now, simplicity and explicitness take precedence.
