@@ -11,7 +11,7 @@
 
 
 
-<title>Toolbox for package management on macOS</title>
+<title>Toolbox for R package management on macOS</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,7 +348,7 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Toolbox for package management on
+<h1 class="title toc-ignore">Toolbox for R package management on
 macOS</h1>
 
 </div>
@@ -357,18 +357,20 @@ macOS</h1>
 <!-- README.md is generated from README.Rmd. Please edit README.Rmd -->
 <div id="foreword" class="section level2">
 <h2>Foreword</h2>
-<p>This document describes a <strong>personal</strong> toolbox for
-managing R packages on macOS. It is my personal philosophy and setup,
-shared here for reference and possible inspiration. It is
-<strong>not</strong> intended as a general-purpose package management
-solution.</p>
+<p>This repository documents a lightweight toolbox for managing R
+packages on macOS. It presents a <strong>clear and explicit
+strategy</strong> for separating CRAN packages from user-developed
+packages, with an emphasis on reproducibility, transparency, and
+long-term maintainability.</p>
+<p>This setup is shared as a <strong>personal choice</strong> for
+convenience. It is not intended to replace existing package managers or
+to provide a universal solution, but it may serve as an inspiration.</p>
+<hr />
 </div>
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>Since I develop R packages frequently and use R over many years, it
-is important for me to have a clear and reproducible setup for managing
-packages, where personal development and CRAN packages are clearly
-separated.</p>
+<p>For users who develop R packages over long periods of time, it is
+often useful to distinguish clearly between:</p>
 <ol style="list-style-type: decimal">
 <li><strong>System library</strong> (<code>.Library</code>)
 <ul>
@@ -377,87 +379,36 @@ separated.</p>
 </ul></li>
 <li><strong>Development library</strong> (custom path)
 <ul>
-<li>User-developed packages under active development</li>
+<li>Packages under active development</li>
 </ul></li>
 </ol>
-<p>The design goals are:</p>
+<p>The design goals of this toolbox are:</p>
 <ul>
 <li>Minimal complexity at R/RStudio startup</li>
-<li>Full control over where packages are installed</li>
+<li>Explicit control over package installation paths</li>
 <li>No implicit behaviour or silent fallbacks</li>
-<li>A clean and reproducible workflow for <strong>R
-upgrades</strong></li>
+<li>A reproducible workflow for R upgrades</li>
 <li>No dependency on external repositories at startup</li>
 </ul>
 <p>This setup assumes that the <strong>system library is
-writable</strong> (standard macOS Framework installation of R).</p>
+writable</strong>, as is the case for the standard macOS Framework
+installation of R.</p>
 <hr />
-</div>
-<div id="quick-start" class="section level2">
-<h2>Quick start</h2>
-<p>This section summarises the minimal steps required to activate the
-toolbox on a new macOS machine.</p>
-<div id="define-the-development-library" class="section level3">
-<h3>1. Define the development library</h3>
-<p>Add the following line to your <code>~/.Renviron</code> file:</p>
-<pre class="text"><code>MY_R_DEVLIB=~/Dropbox/Boulot/dev/r/myRlib</code></pre>
-<p>Restart RStudio after editing <code>.Renviron</code>.</p>
-<hr />
-</div>
-<div id="copy-the-toolbox-files" class="section level3">
-<h3>2. Copy the toolbox files</h3>
-<p>Clone or download this repository, then copy the helper files to your
-local R configuration directory:</p>
-<pre class="bash"><code>mkdir -p ~/.R/toolbox
-cp R/*.R ~/.R/toolbox/</code></pre>
-<hr />
-</div>
-<div id="configure-startup" class="section level3">
-<h3>3. Configure startup</h3>
-<p>Add the following content <strong>verbatim</strong> to your
-<code>~/.Rprofile</code>:</p>
-<pre class="r"><code>tb &lt;- path.expand(&quot;~/.R/toolbox&quot;)
-
-source(file.path(tb, &quot;00-config.R&quot;))
-source(file.path(tb, &quot;install_helpers.R&quot;))
-source(file.path(tb, &quot;upgrade_helpers.R&quot;))
-source(file.path(tb, &quot;diagnostics.R&quot;))
-
-message(&quot;✅ R startup configured (system + dev)&quot;)</code></pre>
-<p>Restart RStudio.</p>
-<hr />
-</div>
-<div id="verify-the-setup" class="section level3">
-<h3>4. Verify the setup</h3>
-<p>Run in R:</p>
-<pre class="r"><code>check_setup()</code></pre>
-<p>You should see:</p>
-<ul>
-<li>exactly two entries in <code>.libPaths()</code> (system + dev),</li>
-<li>write access to both libraries,</li>
-<li>no errors.</li>
-</ul>
-<p>At this point the toolbox is fully operational.</p>
-<hr />
-</div>
 </div>
 <div id="repository-structure" class="section level2">
 <h2>Repository structure</h2>
-<p>This repository <strong>includes the actual <code>.R</code> helper
-files</strong>, stored under a top-level <code>/R/</code> directory
-(similarly to an R package layout, although this is <em>not</em> a
-package).</p>
-<pre><code>toolbox/
+<p>This repository includes the helper scripts used by the toolbox,
+stored under a top-level <code>/R/</code> directory (similar to an R
+package layout, although this is <em>not</em> a package).</p>
+<pre><code>r-toolbox/
 ├─ README.Rmd
 └─ R/
    ├─ 00-config.R
    ├─ install_helpers.R
    ├─ upgrade_helpers.R
    └─ diagnostics.R</code></pre>
-<p>The repository serves as <strong>documentation and a reference
-implementation</strong>. The files under <code>/R/</code> must be
-<strong>copied verbatim</strong> to the local R installation, as
-described below.</p>
+<p>These files are intended to be copied to a local configuration
+directory in the user environment.</p>
 <hr />
 </div>
 <div id="library-policy" class="section level2">
@@ -466,15 +417,15 @@ described below.</p>
 <pre class="r"><code>.libPaths()</code></pre>
 <p>Expected result:</p>
 <pre class="text"><code>[1] /Library/Frameworks/R.framework/Versions/&lt;R-version&gt;/Resources/library
-[2] &lt;MY_R_DEVLIB&gt;</code></pre>
+[2] &lt;DEV_LIBRARY&gt;</code></pre>
 <p>Meaning:</p>
 <ul>
 <li><strong>System library</strong> (<code>.Library</code>)
 <ul>
-<li>Base / recommended packages</li>
+<li>Base and recommended packages</li>
 <li>All CRAN packages</li>
 </ul></li>
-<li><strong>Development library</strong> (<code>MY_R_DEVLIB</code>)
+<li><strong>Development library</strong>
 <ul>
 <li>User-developed packages only</li>
 </ul></li>
@@ -485,27 +436,27 @@ described below.</p>
 </div>
 <div id="development-library-via-environment-variable" class="section level2">
 <h2>Development library via environment variable</h2>
-<p>The development library path is defined through an
-<strong>environment variable</strong>. Add the following line to your
-<code>~/.Renviron</code> file:</p>
-<pre class="text"><code>MY_R_DEVLIB=~/Dropbox/Boulot/dev/r/myRlib</code></pre>
-<div id="why-use-an-environment-variable" class="section level3">
-<h3>Why use an environment variable?</h3>
+<p>The development library path is defined through an environment
+variable.</p>
+<p>Add the following line to <code>~/.Renviron</code>:</p>
+<pre class="text"><code>MY_R_DEVLIB=~/path/to/dev/library</code></pre>
+<div id="rationale" class="section level3">
+<h3>Rationale</h3>
 <ul>
 <li>Avoid hard-coded paths in R scripts</li>
-<li>Easy portability across machines</li>
-<li>Clear failure if misconfigured</li>
-<li>Separation between <em>policy</em> and <em>local paths</em></li>
+<li>Allow easy portability across machines</li>
+<li>Fail explicitly if misconfigured</li>
+<li>Separate policy from local filesystem details</li>
 </ul>
-<p>If <code>MY_R_DEVLIB</code> is not defined, R startup fails
-explicitly with a clear error.</p>
+<p>If <code>MY_R_DEVLIB</code> is not defined, R startup fails with a
+clear error.</p>
 <hr />
 </div>
 </div>
 <div id="local-installation-layout" class="section level2">
 <h2>Local installation layout</h2>
-<p>On the local machine, the active configuration lives <strong>inside
-the user home</strong>, not inside the GitHub repository.</p>
+<p>On the local machine, the active configuration lives inside the user
+home directory.</p>
 <p>Expected layout:</p>
 <pre class="text"><code>~/.Rprofile
 ~/.Renviron
@@ -522,7 +473,6 @@ the user home</strong>, not inside the GitHub repository.</p>
 <li>Copy the contents of the <code>/R/</code> directory into
 <code>~/.R/toolbox/</code>.</li>
 </ol>
-<p>Example:</p>
 <pre class="bash"><code>mkdir -p ~/.R/toolbox
 cp R/*.R ~/.R/toolbox/</code></pre>
 <hr />
@@ -531,7 +481,7 @@ cp R/*.R ~/.R/toolbox/</code></pre>
 <div id="startup-behaviour-.rprofile" class="section level2">
 <h2>Startup behaviour (<code>.Rprofile</code>)</h2>
 <p>The <code>~/.Rprofile</code> is deliberately minimal and only sources
-local files. Add the following content <strong>verbatim</strong>:</p>
+local configuration files:</p>
 <pre class="r"><code>tb &lt;- path.expand(&quot;~/.R/toolbox&quot;)
 
 source(file.path(tb, &quot;00-config.R&quot;))
@@ -539,128 +489,70 @@ source(file.path(tb, &quot;install_helpers.R&quot;))
 source(file.path(tb, &quot;upgrade_helpers.R&quot;))
 source(file.path(tb, &quot;diagnostics.R&quot;))
 
-message(&quot;✅ R startup configured (system + dev)&quot;)</code></pre>
-<p>No logic, no installation, no side effects beyond configuration.</p>
+message(&quot;R startup configured (system + dev)&quot;)</code></pre>
 <hr />
 </div>
 <div id="role-of-each-toolbox-file" class="section level2">
 <h2>Role of each toolbox file</h2>
 <div id="config.r-library-policy" class="section level3">
 <h3><code>00-config.R</code> — library policy</h3>
-<p>Responsibilities:</p>
 <ul>
-<li>Read <code>MY_R_DEVLIB</code></li>
-<li>Ensure the development library exists</li>
-<li>Enforce <code>.libPaths(c(.Library, .myRlib))</code></li>
+<li>Reads <code>MY_R_DEVLIB</code></li>
+<li>Ensures the development library exists</li>
+<li>Enforces <code>.libPaths(c(.Library, .myRlib))</code></li>
 </ul>
-<p>This file defines <strong>policy</strong>, not actions.</p>
+<p>Defines policy only.</p>
 <hr />
 </div>
 <div id="install_helpers.r-installation-helpers" class="section level3">
 <h3><code>install_helpers.R</code> — installation helpers</h3>
-<p>Provides explicit helpers:</p>
 <ul>
-<li><p><code>install_cran(pkgs)</code> → installs CRAN packages
-<strong>into <code>.Library</code></strong></p></li>
-<li><p><code>install_my(path = &quot;.&quot;)</code> → installs the current
-development package <strong>into the dev library</strong></p></li>
+<li><p><code>install_cran(pkgs)</code><br />
+Installs CRAN packages into <code>.Library</code>.</p></li>
+<li><p><code>install_my(path = &quot;.&quot;)</code><br />
+Installs a development package into the development library.</p></li>
 </ul>
-<p>RStudio’s <em>Install and Restart</em> button is deliberately
-avoided.</p>
 <hr />
 </div>
 <div id="upgrade_helpers.r-r-upgrade-workflow" class="section level3">
 <h3><code>upgrade_helpers.R</code> — R upgrade workflow</h3>
-<p>Defines a reproducible workflow for R upgrades.</p>
 <p>Before upgrading R:</p>
 <pre class="r"><code>save_cran_list()</code></pre>
-<p>This saves the list of non-base / non-recommended packages currently
-installed in <code>.Library</code>.</p>
 <p>After installing a new R version:</p>
 <pre class="r"><code>restore_cran_list()</code></pre>
-<p>All packages are reinstalled cleanly into the new system library.</p>
-<p>This avoids copying binaries across R versions.</p>
+<p>This reinstalls all non-base packages cleanly into the new system
+library.</p>
 <hr />
 </div>
-<div id="diagnostics.r-validation-and-inspection" class="section level3">
-<h3><code>diagnostics.R</code> — validation and inspection</h3>
-<p>Provides utilities such as:</p>
+<div id="diagnostics.r-validation-utilities" class="section level3">
+<h3><code>diagnostics.R</code> — validation utilities</h3>
+<p>Provides read-only diagnostics such as:</p>
 <ul>
-<li><p><code>check_setup()</code> Prints:</p>
-<ul>
-<li><code>.libPaths()</code></li>
-<li>write permissions</li>
-<li>test package locations</li>
-</ul></li>
-<li><p><code>list_sys_nonbase()</code> Lists CRAN packages installed in
-<code>.Library</code>.</p></li>
-<li><p><code>list_dev_packages()</code> Lists packages installed in the
-development library.</p></li>
+<li><code>check_setup()</code></li>
+<li><code>list_sys_nonbase()</code></li>
+<li><code>list_dev_packages()</code></li>
 </ul>
-<p>These functions are <strong>read-only</strong> and safe.</p>
 <hr />
 </div>
 </div>
 <div id="rstudio-workflow-recommendations" class="section level2">
 <h2>RStudio workflow recommendations</h2>
-<div id="package-development" class="section level3">
-<h3>Package development</h3>
 <ul>
-<li>Use <strong>Build &amp; Reload</strong>
-<ul>
-<li>loads the package via <code>devtools::load_all()</code></li>
-<li>does <em>not</em> install anything</li>
-</ul></li>
-<li>Use <code>install_my()</code> when an installed copy is needed.</li>
-</ul>
-</div>
-<div id="cran-packages" class="section level3">
-<h3>CRAN packages</h3>
-<p>Always use:</p>
-<pre class="r"><code>install_cran(&quot;pkgname&quot;)</code></pre>
-<p>This guarantees the package ends up in <code>.Library</code>.</p>
-<hr />
-</div>
-</div>
-<div id="r-upgrades-summary" class="section level2">
-<h2>R upgrades (summary)</h2>
-<p>Before upgrading R:</p>
-<pre class="r"><code>save_cran_list()</code></pre>
-<p>Install new R version (macOS Framework installer).</p>
-<p>Restart RStudio.</p>
-<p>Restore packages:</p>
-<pre class="r"><code>restore_cran_list()</code></pre>
-<p>This yields a clean, version-consistent system library.</p>
-<hr />
-</div>
-<div id="why-this-setup-works-well" class="section level2">
-<h2>Why this setup works well</h2>
-<ul>
-<li>Explicit over implicit</li>
-<li>No magic paths</li>
-<li>No dependency on GitHub at startup</li>
-<li>Reproducible upgrades</li>
-<li>Clear separation of concerns</li>
-<li>Easy to debug</li>
-</ul>
-<p>This configuration is particularly well suited for:</p>
-<ul>
-<li>long-term scientific workflows</li>
-<li>multiple R versions over time</li>
-<li>mixed CRAN + development usage</li>
-<li>environments where stability matters more than convenience</li>
+<li>Use <strong>Build &amp; Reload</strong> for development
+(<code>devtools::load_all()</code>).</li>
+<li>Use <code>install_my()</code> only when an installed copy is
+required.</li>
+<li>Use <code>install_cran()</code> for all CRAN packages.</li>
 </ul>
 <hr />
 </div>
 <div id="final-note" class="section level2">
 <h2>Final note</h2>
-<p>This toolbox is intentionally <strong>not an R package</strong>.</p>
-<p>The use of a <code>/R/</code> directory mirrors a package layout only
-for clarity and future extensibility. If, at some point, interactive
-help or namespace control becomes desirable, these helpers could be
-migrated into a small personal package without changing the underlying
-philosophy.</p>
-<p>For now, simplicity and explicitness take precedence.</p>
+<p>This toolbox is intentionally <strong>not an R package</strong>. The
+<code>/R/</code> layout is used for clarity and potential future
+evolution.</p>
+<p>The emphasis is on <strong>explicit configuration, reproducibility,
+and control</strong>.</p>
 </div>
 
 
