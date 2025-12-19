@@ -1,14 +1,11 @@
----
-output: 
-  html_document: 
-    keep_md: true
----
-<!-- README.md is generated from README.Rmd. Please edit README.Rmd -->
+
 
 ---
 title: "Toolbox for R package management on macOS"
 output: github_document
 ---
+
+<!-- README.md is generated from README.Rmd. Please edit README.Rmd -->
 
 ## Foreword
 
