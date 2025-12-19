@@ -7,13 +7,11 @@ output: github_document
 
 ## Foreword
 
-This repository documents a lightweight toolbox for managing R packages on macOS.
-It presents a **clear and explicit strategy** for separating CRAN packages from
+This repository documents a lightweight toolbox for managing R packages on macOS. It presents a **clear and explicit strategy** for separating CRAN packages from
 user-developed packages, with an emphasis on reproducibility, transparency, and
 long-term maintainability.
 
-This setup is shared as a **personal choice** for convenience. It is not intended to replace
-existing package managers or to provide a universal solution, but it may serve as an inspiration.
+This setup is shared as a **personal choice** for convenience that may serve as an inspiration.
 
 ---
 
